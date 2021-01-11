@@ -1,12 +1,17 @@
-This is a boilerplate repo for starting a new library. It includes configurations for:
+This is a light wrapper around the official [`oracledb`
+driver](https://github.com/oracle/node-oracledb) used to read data from external Oracle databases
+for a number of ETL services at SEAS
 
-- eslint
-- typescript
-- typedoc
-- mocha
-- codecov
-- travis
+## Installation
 
-When setting up a new project from this repo, make sure to update the `"name"` in the
-`package.json`, along with the various `"url"` fields. You should also remove this README and create
-a new one specific to the project.
+The package can be installed from `npm`. You'll also need to install the official driver:
+
+```sh
+npm install @seas-computing/oracle-wrapper oracledb
+```
+
+There are some additional steps required to set up client libraries needed by the oracledb driver,
+which can be found in [the official documentation](https://oracle.github.io/node-oracledb/INSTALL.html#quickstart)
+
+Typescript definitions for this library are included; definitions for the official driver require
+the `@types/oracledb` package.

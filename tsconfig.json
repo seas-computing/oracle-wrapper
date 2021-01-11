@@ -1,0 +1,27 @@
+{
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "declaration": true,
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "moduleResolution": "node",
+    "target": "ES5",
+    "types": [
+      "mocha",
+      "node",
+      "sinon"
+    ],
+    "sourceMap": true,
+    "outDir": "./lib",
+    "baseUrl": "./src",
+    "incremental": false
+  },
+  "include": [
+    "src"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}

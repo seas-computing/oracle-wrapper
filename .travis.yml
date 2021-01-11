@@ -1,0 +1,39 @@
+language: node_js
+node_js:
+    - "10"
+stages:
+  - test
+  - name: documentation
+    if: branch = main AND type != pull_request AND NOT repo =~ boilerplate
+  - name: npm_deploy
+    if: branch IN (main, develop) AND NOT repo =~ boilerplate
+jobs:
+  include:
+    - stage: test
+      script:
+      - npm run typecheck
+      - npm run lint
+      - npm run test
+      - npm run codecov
+    - stage: documentation
+      script:
+        - npm run docs 
+        - touch ./docs/.nojekyll
+      deploy:
+        provider: pages
+        github_token: $GITHUB_TOKEN
+        local_dir: .docs/
+        skip_cleanup: true
+        target_branch: gh-pages
+        on:
+          branch: main
+    - stage: npm_deploy
+      before_deploy: "./.travis_version_bump.sh"
+      deploy:
+        provider: npm
+        email: $DEV_TEAM_EMAIL
+        api_key: $NPM_TOKEN
+        skip_cleanup: true
+        tag: $NPM_TAG
+        on:
+          all_branches: true

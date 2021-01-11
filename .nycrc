@@ -1,0 +1,14 @@
+{
+  "check-coverage": true,
+  "lines": 80,
+  "statements": 80,
+  "functions": 80,
+  "all": false,
+  "include": ["src/**/*"],
+  "exclude": ["src/**/__tests__/*"],
+  "extension": [".ts"],
+  "clean": true,
+  "instrument": true,
+  "sourceMap": true,
+  "reporter": "text"
+}

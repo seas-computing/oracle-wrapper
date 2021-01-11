@@ -1,7 +1,7 @@
 {
-  "name": "boilerplate-library",
+  "name": "oracle-wrapper",
   "version": "0.0.0",
-  "description": "A starting point for libraries that will be packaged and distributed on npm",
+  "description": "A lightweight wrapper about the oracledb driver",
   "main": "lib/index.js",
   "scripts": {
     "build": "tsc --project tsconfig.publish.json",
@@ -14,19 +14,24 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/seas-computing/boilerplate-library.git"
+    "url": "git+https://github.com/seas-computing/oracle-wrapper.git"
   },
-  "keywords": [],
+  "keywords": [
+    "oracledb"
+  ],
   "author": "SEAS Computing",
   "license": "BSD-3-Clause",
   "bugs": {
-    "url": "https://github.com/seas-computing/boilerplate-library/issues"
+    "url": "https://github.com/seas-computing/oracle-wrapper/issues"
   },
-  "homepage": "https://github.com/seas-computing/boilerplate-library#readme",
-  "peerDependencies": {},
+  "homepage": "https://github.com/seas-computing/oracle-wrapper#readme",
+  "peerDependencies": {
+    "oracledb": "^5.1.0"
+  },
   "devDependencies": {
     "@types/mocha": "^8.2.0",
     "@types/node": "^14.14.20",
+    "@types/oracledb": "^5.1.0",
     "@types/sinon": "^9.0.10",
     "@typescript-eslint/eslint-plugin": "^4.12.0",
     "@typescript-eslint/parser": "^4.12.0",
@@ -38,6 +43,7 @@
     "eslint-plugin-mocha": "^8.0.0",
     "mocha": "^8.2.1",
     "nyc": "^15.1.0",
+    "oracledb": "^5.1.0",
     "sinon": "^9.2.3",
     "ts-node": "^9.1.1",
     "typedoc": "^0.20.13",

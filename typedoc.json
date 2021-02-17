@@ -1,5 +1,7 @@
 {
-  "mode": "file",
+  "entryPoints": [
+    "src/index.ts"
+  ],
   "out": "docs",
   "exclude": [
     "**/__tests__/*"

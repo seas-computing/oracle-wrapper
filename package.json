@@ -1,5 +1,5 @@
 {
-  "name": "oracle-wrapper",
+  "name": "@seas-computing/oracle-wrapper",
   "version": "0.0.0",
   "description": "A lightweight wrapper about the oracledb driver",
   "main": "lib/index.js",

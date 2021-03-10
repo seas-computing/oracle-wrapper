@@ -4,6 +4,7 @@ import { stub, SinonStub } from 'sinon';
 import oracledb, { Connection, PoolAttributes } from 'oracledb';
 import OracleWrapper from '../index';
 import { Logger, OracleDBOptions } from '../types';
+import * as dummy from './mockData';
 
 describe('OracleWrapper', function () {
   let wrapper: OracleWrapper;
@@ -12,13 +13,6 @@ describe('OracleWrapper', function () {
   let connectionPool: Record<string, SinonStub>;
   let dbConnection: Record<string, SinonStub>;
   let queryResult: Record<string, Record<string, SinonStub>>;
-  const credentials = {
-    host: '127.0.0.1',
-    port: '1521',
-    sid: 'ORCTEST',
-    user: 'SYSADMIN',
-    password: 'oracledbtest',
-  };
   let options: OracleDBOptions;
   let testLogger: Record<string, SinonStub>;
 
@@ -48,7 +42,7 @@ describe('OracleWrapper', function () {
       alias: 'TestDB1',
       logger: testLogger as unknown as Logger,
     };
-    wrapper = new OracleWrapper(credentials, options);
+    wrapper = new OracleWrapper(dummy.dbCredentials, options);
     getConnectionStub = stub(oracledb, 'getConnection');
     createPoolStub = stub(oracledb, 'createPool');
   });
@@ -58,7 +52,10 @@ describe('OracleWrapper', function () {
       let aliasedWrapper: OracleWrapper;
       context('With a value in options', function () {
         beforeEach(function () {
-          aliasedWrapper = new OracleWrapper(credentials, { alias: testAlias });
+          aliasedWrapper = new OracleWrapper(
+            dummy.dbCredentials,
+            { alias: testAlias }
+          );
         });
         it('Should use the alias as the property', function () {
           // eslint-disable-next-line @typescript-eslint/dot-notation
@@ -67,11 +64,11 @@ describe('OracleWrapper', function () {
       });
       context('Without a value in options', function () {
         beforeEach(function () {
-          aliasedWrapper = new OracleWrapper(credentials);
+          aliasedWrapper = new OracleWrapper(dummy.dbCredentials);
         });
         it('Should use the sid as the alias property', function () {
           // eslint-disable-next-line @typescript-eslint/dot-notation
-          assert.strictEqual(aliasedWrapper['alias'], credentials.sid);
+          assert.strictEqual(aliasedWrapper['alias'], dummy.dbCredentials.sid);
         });
       });
     });
@@ -111,11 +108,11 @@ describe('OracleWrapper', function () {
               password,
               connectionString,
             } = createPoolStub.args[0][0] as PoolAttributes;
-            assert.strictEqual(user, credentials.user);
-            assert.strictEqual(password, credentials.password);
+            assert.strictEqual(user, dummy.user);
+            assert.strictEqual(password, dummy.password);
             assert.strictEqual(
               connectionString,
-              `${credentials.host}:${credentials.port}/${credentials.sid}`
+              `${dummy.host}:${dummy.port}/${dummy.sid}`
             );
           }
         });
@@ -204,11 +201,11 @@ describe('OracleWrapper', function () {
               password,
               connectionString,
             } = createPoolStub.args[0][0] as PoolAttributes;
-            assert.strictEqual(user, credentials.user);
-            assert.strictEqual(password, credentials.password);
+            assert.strictEqual(user, dummy.user);
+            assert.strictEqual(password, dummy.password);
             assert.strictEqual(
               connectionString,
-              `${credentials.host}:${credentials.port}/${credentials.sid}`
+              `${dummy.host}:${dummy.port}/${dummy.sid}`
             );
           });
           it('Should call getConnection', function () {
@@ -318,14 +315,8 @@ describe('OracleWrapper', function () {
   });
   describe('query', function () {
     let testError: Error;
-    let testQuery: string;
-    let testQueryWithoutVariables: string;
-    let testVariables: Record<string, string>;
     beforeEach(function () {
       testError = new Error('query failed');
-      testQueryWithoutVariables = 'SELECT * FROM USERS;';
-      testQuery = "SELECT * FROM USERS WHERE NAME=':name';";
-      testVariables = { name: 'foo' };
       dbConnection.release.resolves();
       stub(OracleWrapper.prototype, 'getConnection')
         .resolves(dbConnection as unknown as Connection);
@@ -336,23 +327,23 @@ describe('OracleWrapper', function () {
       });
       it('Should log the query and variables to the debug channel', async function () {
         try {
-          await wrapper.query(testQuery, testVariables);
+          await wrapper.query(dummy.queryWithParameters, dummy.queryParameters);
           assert.fail();
         } catch (err) {
           assert.strictEqual(testLogger.debug.callCount, 2);
           assert.strictEqual(
             testLogger.debug.args[0][0],
-            `Executing Query: ${testQuery}`
+            `Executing Query: ${dummy.queryWithParameters}`
           );
           assert.strictEqual(
             testLogger.debug.args[1][0],
-            `Parameters: ${util.inspect(testVariables)}`
+            `Parameters: ${util.inspect(dummy.queryParameters)}`
           );
         }
       });
       it('Should attempt to execute the query', async function () {
         try {
-          await wrapper.query(testQuery, testVariables);
+          await wrapper.query(dummy.queryWithParameters, dummy.queryParameters);
           assert.fail();
         } catch (err) {
           assert.strictEqual(dbConnection.execute.callCount, 1);
@@ -360,7 +351,7 @@ describe('OracleWrapper', function () {
       });
       it('Should log an error message', async function () {
         try {
-          await wrapper.query(testQuery, testVariables);
+          await wrapper.query(dummy.queryWithParameters, dummy.queryParameters);
           assert.fail();
         } catch (err) {
           assert.strictEqual(testLogger.error.callCount, 2);
@@ -370,7 +361,7 @@ describe('OracleWrapper', function () {
       });
       it('Should release the connection', async function () {
         try {
-          await wrapper.query(testQuery, testVariables);
+          await wrapper.query(dummy.queryWithParameters, dummy.queryParameters);
           assert.fail();
         } catch (err) {
           assert.strictEqual(dbConnection.release.callCount, 1);
@@ -378,7 +369,7 @@ describe('OracleWrapper', function () {
       });
       it('Should throw the error', async function () {
         try {
-          await wrapper.query(testQuery, testVariables);
+          await wrapper.query(dummy.queryWithParameters, dummy.queryParameters);
           assert.fail();
         } catch (err) {
           assert.strictEqual(err, testError);
@@ -395,7 +386,10 @@ describe('OracleWrapper', function () {
         });
         it('Should log an error message', async function () {
           try {
-            await wrapper.query(testQuery, testVariables);
+            await wrapper.query(
+              dummy.queryWithParameters,
+              dummy.queryParameters
+            );
             assert.fail();
           } catch (err) {
             assert.strictEqual(testLogger.error.callCount, 2);
@@ -405,7 +399,10 @@ describe('OracleWrapper', function () {
         });
         it('Should close the result set', async function () {
           try {
-            await wrapper.query(testQuery, testVariables);
+            await wrapper.query(
+              dummy.queryWithParameters,
+              dummy.queryParameters
+            );
             assert.fail();
           } catch (err) {
             assert.strictEqual(queryResult.resultSet.close.callCount, 1);
@@ -413,7 +410,10 @@ describe('OracleWrapper', function () {
         });
         it('Should release the connection', async function () {
           try {
-            await wrapper.query(testQuery, testVariables);
+            await wrapper.query(
+              dummy.queryWithParameters,
+              dummy.queryParameters
+            );
             assert.fail();
           } catch (err) {
             assert.strictEqual(dbConnection.release.callCount, 1);
@@ -421,7 +421,10 @@ describe('OracleWrapper', function () {
         });
         it('Should throw the error', async function () {
           try {
-            await wrapper.query(testQuery, testVariables);
+            await wrapper.query(
+              dummy.queryWithParameters,
+              dummy.queryParameters
+            );
             assert.fail();
           } catch (err) {
             assert.strictEqual(err, testError);
@@ -430,26 +433,21 @@ describe('OracleWrapper', function () {
       });
       context('When response generation succeeds', function () {
         let results: Record<string, unknown>[];
-        const fullQueryResults = [
-          { name: 'one' },
-          { name: 'two' },
-          { name: 'three' },
-          { name: 'four' },
-          { name: 'fix' },
-          { name: 'six' },
-        ];
         beforeEach(function () {
           queryResult.resultSet.close.resolves();
           queryResult.resultSet.getRows.onFirstCall()
-            .resolves(fullQueryResults.slice(0, 3));
+            .resolves(dummy.queryResults.slice(0, 3));
           queryResult.resultSet.getRows.onSecondCall()
-            .resolves(fullQueryResults.slice(3, 6));
+            .resolves(dummy.queryResults.slice(3, 6));
           queryResult.resultSet.getRows.onThirdCall().resolves([]);
           dbConnection.execute.resolves(queryResult);
         });
         context('with Variables', function () {
           beforeEach(async function () {
-            results = await wrapper.query(testQuery, testVariables);
+            results = await wrapper.query(
+              dummy.queryWithParameters,
+              dummy.queryParameters
+            );
           });
           it('should close the resultSet', function () {
             assert.strictEqual(queryResult.resultSet.close.callCount, 1);
@@ -459,12 +457,12 @@ describe('OracleWrapper', function () {
           });
           it('should return the full set of results', function () {
             assert.strictEqual(queryResult.resultSet.getRows.callCount, 3);
-            assert.deepStrictEqual(results, fullQueryResults);
+            assert.deepStrictEqual(results, dummy.queryResults);
           });
         });
         context('without Variables', function () {
           beforeEach(async function () {
-            results = await wrapper.query(testQueryWithoutVariables);
+            results = await wrapper.query(dummy.queryWithoutParameters);
           });
           it('should close the resultSet', function () {
             assert.strictEqual(queryResult.resultSet.close.callCount, 1);
@@ -474,7 +472,7 @@ describe('OracleWrapper', function () {
           });
           it('should return the full set of results', function () {
             assert.strictEqual(queryResult.resultSet.getRows.callCount, 3);
-            assert.deepStrictEqual(results, fullQueryResults);
+            assert.deepStrictEqual(results, dummy.queryResults);
           });
         });
       });

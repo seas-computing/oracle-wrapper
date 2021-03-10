@@ -64,10 +64,6 @@ describe('OracleWrapper', function () {
           // eslint-disable-next-line @typescript-eslint/dot-notation
           assert.strictEqual(aliasedWrapper['alias'], testAlias);
         });
-        it('Should use the alias in the poolCredentials', function () {
-          // eslint-disable-next-line
-          assert.strictEqual(aliasedWrapper['poolCredentials'].poolAlias, testAlias);
-        });
       });
       context('Without a value in options', function () {
         beforeEach(function () {
@@ -76,36 +72,6 @@ describe('OracleWrapper', function () {
         it('Should use the sid as the alias property', function () {
           // eslint-disable-next-line @typescript-eslint/dot-notation
           assert.strictEqual(aliasedWrapper['alias'], credentials.sid);
-        });
-        it('Should use the sid as the poolAlias in the poolCredentials', function () {
-          // eslint-disable-next-line
-          assert.strictEqual(aliasedWrapper['poolCredentials'].poolAlias, credentials.sid);
-        });
-      });
-    });
-    describe('Logger', function () {
-      let aliasedWrapper: OracleWrapper;
-      context('With a value in options', function () {
-        beforeEach(function () {
-          aliasedWrapper = new OracleWrapper(
-            credentials,
-            {
-              logger: testLogger as unknown as Logger,
-            }
-          );
-        });
-        it('Should use the passed-in Logger', function () {
-          // eslint-disable-next-line
-          assert.strictEqual(aliasedWrapper['logger'], testLogger);
-        });
-      });
-      context('Without a value in options', function () {
-        beforeEach(function () {
-          aliasedWrapper = new OracleWrapper(credentials);
-        });
-        it('Should use the Console', function () {
-          // eslint-disable-next-line
-          assert.strictEqual(aliasedWrapper['logger'], console);
         });
       });
     });

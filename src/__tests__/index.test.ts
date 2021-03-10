@@ -61,7 +61,7 @@ describe('OracleWrapper', function () {
           aliasedWrapper = new OracleWrapper(credentials, { alias: testAlias });
         });
         it('Should use the alias as the property', function () {
-          // eslint-disable-next-line
+          // eslint-disable-next-line @typescript-eslint/dot-notation
           assert.strictEqual(aliasedWrapper['alias'], testAlias);
         });
         it('Should use the alias in the poolCredentials', function () {
@@ -74,7 +74,7 @@ describe('OracleWrapper', function () {
           aliasedWrapper = new OracleWrapper(credentials);
         });
         it('Should use the sid as the alias property', function () {
-          // eslint-disable-next-line
+          // eslint-disable-next-line @typescript-eslint/dot-notation
           assert.strictEqual(aliasedWrapper['alias'], credentials.sid);
         });
         it('Should use the sid as the poolAlias in the poolCredentials', function () {

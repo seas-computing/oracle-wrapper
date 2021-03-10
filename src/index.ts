@@ -12,7 +12,6 @@ oracledb.outFormat = oracledb.OUT_FORMAT_OBJECT;
 /**
  * The default options for the Oracle Wrapper
  */
-
 const defaultOptions: OracleDBOptions = {
   logger: console,
   poolMin: 0,
@@ -25,7 +24,6 @@ const defaultOptions: OracleDBOptions = {
 /**
  * Interface to the Oracle database
  */
-
 export default class OracleWrapper {
   /**
    * A cache alias that will be used to identify this connection

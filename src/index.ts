@@ -97,6 +97,7 @@ export default class OracleWrapper {
         this.connectionPool = await oracledb.createPool(this.poolCredentials);
       } catch (err) {
         this.logger.error('Failed to create connectionPool');
+        this.logger.error(err);
         throw err;
       }
     }
@@ -105,6 +106,7 @@ export default class OracleWrapper {
       return connection;
     } catch (err) {
       this.logger.error('Failed to get connection');
+      this.logger.error(err);
       throw err;
     }
   }
@@ -121,6 +123,7 @@ export default class OracleWrapper {
         this.logger.info('Connection pool released');
       } catch (err) {
         this.logger.error('Could not release pool');
+        this.logger.error(err);
         throw err;
       }
     }
@@ -148,6 +151,7 @@ export default class OracleWrapper {
       result = await conn.execute(query, variables, options);
     } catch (err) {
       this.logger.error('Query failed');
+      this.logger.error(err);
       await conn.release();
       throw err;
     }
@@ -167,6 +171,7 @@ export default class OracleWrapper {
       return response;
     } catch (err) {
       this.logger.error('Error fetching data from query');
+      this.logger.error(err);
       await result.resultSet.close();
       await conn.release();
       throw err;

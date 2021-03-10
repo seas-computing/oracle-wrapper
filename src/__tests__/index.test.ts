@@ -158,11 +158,12 @@ describe('OracleWrapper', function () {
             await wrapper.getConnection();
             assert.fail();
           } catch (error) {
-            assert.strictEqual(testLogger.error.callCount, 1);
+            assert.strictEqual(testLogger.error.callCount, 2);
             assert.strictEqual(
               testLogger.error.args[0][0],
               'Failed to create connectionPool'
             );
+            assert.strictEqual(testLogger.error.args[1][0], testError);
           }
         });
         it('Should throw the error', async function () {
@@ -203,8 +204,9 @@ describe('OracleWrapper', function () {
               await wrapper.getConnection();
               assert.fail();
             } catch (error) {
-              assert.strictEqual(testLogger.error.callCount, 1);
+              assert.strictEqual(testLogger.error.callCount, 2);
               assert.strictEqual(testLogger.error.args[0][0], 'Failed to get connection');
+              assert.strictEqual(testLogger.error.args[1][0], testError);
             }
           });
           it('Should throw the error', async function () {
@@ -313,11 +315,12 @@ describe('OracleWrapper', function () {
             await wrapper.releasePool();
             assert.fail();
           } catch (error) {
-            assert.strictEqual(testLogger.error.callCount, 1);
+            assert.strictEqual(testLogger.error.callCount, 2);
             assert.strictEqual(
               testLogger.error.args[0][0],
               'Could not release pool'
             );
+            assert.strictEqual(testLogger.error.args[1][0], testError);
           }
         });
         it('Should rethrow the error', async function () {
@@ -394,8 +397,9 @@ describe('OracleWrapper', function () {
           await wrapper.query(testQuery, testVariables);
           assert.fail();
         } catch (err) {
-          assert.strictEqual(testLogger.error.callCount, 1);
+          assert.strictEqual(testLogger.error.callCount, 2);
           assert.strictEqual(testLogger.error.args[0][0], 'Query failed');
+          assert.strictEqual(testLogger.error.args[1][0], testError);
         }
       });
       it('Should release the connection', async function () {
@@ -428,8 +432,9 @@ describe('OracleWrapper', function () {
             await wrapper.query(testQuery, testVariables);
             assert.fail();
           } catch (err) {
-            assert.strictEqual(testLogger.error.callCount, 1);
+            assert.strictEqual(testLogger.error.callCount, 2);
             assert.strictEqual(testLogger.error.args[0][0], 'Error fetching data from query');
+            assert.strictEqual(testLogger.error.args[1][0], testError);
           }
         });
         it('Should close the result set', async function () {

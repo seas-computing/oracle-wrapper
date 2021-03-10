@@ -84,7 +84,7 @@ describe('OracleWrapper', function () {
         it('Should attempt to create a new connection pool', async function () {
           try {
             await wrapper.getConnection();
-            fail();
+            fail('Did not throw an error');
           } catch (error) {
             strictEqual(createPoolStub.callCount, 1);
           }
@@ -92,7 +92,7 @@ describe('OracleWrapper', function () {
         it('Should use the alias from options', async function () {
           try {
             await wrapper.getConnection();
-            fail();
+            fail('Did not throw an error');
           } catch (error) {
             const { poolAlias } = createPoolStub.args[0][0] as PoolAttributes;
             strictEqual(poolAlias, options.alias);
@@ -101,7 +101,7 @@ describe('OracleWrapper', function () {
         it('Should use the credentials', async function () {
           try {
             await wrapper.getConnection();
-            fail();
+            fail('Did not throw an error');
           } catch (error) {
             const {
               user,
@@ -119,7 +119,7 @@ describe('OracleWrapper', function () {
         it('Should log an error notice', async function () {
           try {
             await wrapper.getConnection();
-            fail();
+            fail('Did not throw an error');
           } catch (error) {
             strictEqual(testLogger.error.callCount, 2);
             strictEqual(
@@ -132,7 +132,7 @@ describe('OracleWrapper', function () {
         it('Should throw the error', async function () {
           try {
             await wrapper.getConnection();
-            fail();
+            fail('Did not throw an error');
           } catch (error) {
             deepStrictEqual(error, testError);
           }
@@ -149,7 +149,7 @@ describe('OracleWrapper', function () {
           it('Should call getConnection', async function () {
             try {
               await wrapper.getConnection();
-              fail();
+              fail('Did not throw an error');
             } catch (error) {
               strictEqual(getConnectionStub.callCount, 1);
             }
@@ -157,7 +157,7 @@ describe('OracleWrapper', function () {
           it('Should use the alias from the options', async function () {
             try {
               await wrapper.getConnection();
-              fail();
+              fail('Did not throw an error');
             } catch (error) {
               strictEqual(getConnectionStub.args[0][0], options.alias);
             }
@@ -165,7 +165,7 @@ describe('OracleWrapper', function () {
           it('Should log a message about the error', async function () {
             try {
               await wrapper.getConnection();
-              fail();
+              fail('Did not throw an error');
             } catch (error) {
               strictEqual(testLogger.error.callCount, 2);
               strictEqual(testLogger.error.args[0][0], 'Failed to get connection');
@@ -175,7 +175,7 @@ describe('OracleWrapper', function () {
           it('Should throw the error', async function () {
             try {
               await wrapper.getConnection();
-              fail();
+              fail('Did not throw an error');
             } catch (error) {
               deepStrictEqual(error, testError);
             }
@@ -268,7 +268,7 @@ describe('OracleWrapper', function () {
         it('Should call connectionPool.close', async function () {
           try {
             await wrapper.releasePool();
-            fail();
+            fail('Did not throw an error');
           } catch (error) {
             strictEqual(connectionPool.close.callCount, 1);
           }
@@ -276,7 +276,7 @@ describe('OracleWrapper', function () {
         it('Should log an error message', async function () {
           try {
             await wrapper.releasePool();
-            fail();
+            fail('Did not throw an error');
           } catch (error) {
             strictEqual(testLogger.error.callCount, 2);
             strictEqual(
@@ -289,7 +289,7 @@ describe('OracleWrapper', function () {
         it('Should rethrow the error', async function () {
           try {
             await wrapper.releasePool();
-            fail();
+            fail('Did not throw an error');
           } catch (error) {
             strictEqual(error, testError);
           }
@@ -328,7 +328,7 @@ describe('OracleWrapper', function () {
       it('Should log the query and variables to the debug channel', async function () {
         try {
           await wrapper.query(dummy.queryWithParameters, dummy.queryParameters);
-          fail();
+          fail('Did not throw an error');
         } catch (err) {
           strictEqual(testLogger.debug.callCount, 2);
           strictEqual(
@@ -344,7 +344,7 @@ describe('OracleWrapper', function () {
       it('Should attempt to execute the query', async function () {
         try {
           await wrapper.query(dummy.queryWithParameters, dummy.queryParameters);
-          fail();
+          fail('Did not throw an error');
         } catch (err) {
           strictEqual(dbConnection.execute.callCount, 1);
         }
@@ -352,7 +352,7 @@ describe('OracleWrapper', function () {
       it('Should log an error message', async function () {
         try {
           await wrapper.query(dummy.queryWithParameters, dummy.queryParameters);
-          fail();
+          fail('Did not throw an error');
         } catch (err) {
           strictEqual(testLogger.error.callCount, 2);
           strictEqual(testLogger.error.args[0][0], 'Query failed');
@@ -362,7 +362,7 @@ describe('OracleWrapper', function () {
       it('Should release the connection', async function () {
         try {
           await wrapper.query(dummy.queryWithParameters, dummy.queryParameters);
-          fail();
+          fail('Did not throw an error');
         } catch (err) {
           strictEqual(dbConnection.release.callCount, 1);
         }
@@ -370,7 +370,7 @@ describe('OracleWrapper', function () {
       it('Should throw the error', async function () {
         try {
           await wrapper.query(dummy.queryWithParameters, dummy.queryParameters);
-          fail();
+          fail('Did not throw an error');
         } catch (err) {
           strictEqual(err, testError);
         }
@@ -390,7 +390,7 @@ describe('OracleWrapper', function () {
               dummy.queryWithParameters,
               dummy.queryParameters
             );
-            fail();
+            fail('Did not throw an error');
           } catch (err) {
             strictEqual(testLogger.error.callCount, 2);
             strictEqual(testLogger.error.args[0][0], 'Error fetching data from query');
@@ -403,7 +403,7 @@ describe('OracleWrapper', function () {
               dummy.queryWithParameters,
               dummy.queryParameters
             );
-            fail();
+            fail('Did not throw an error');
           } catch (err) {
             strictEqual(queryResult.resultSet.close.callCount, 1);
           }
@@ -414,7 +414,7 @@ describe('OracleWrapper', function () {
               dummy.queryWithParameters,
               dummy.queryParameters
             );
-            fail();
+            fail('Did not throw an error');
           } catch (err) {
             strictEqual(dbConnection.release.callCount, 1);
           }
@@ -425,7 +425,7 @@ describe('OracleWrapper', function () {
               dummy.queryWithParameters,
               dummy.queryParameters
             );
-            fail();
+            fail('Did not throw an error');
           } catch (err) {
             strictEqual(err, testError);
           }

@@ -39,5 +39,29 @@ export interface OracleDBOptions {
    * An instance of a logger. Uses the console by default.
   */
   logger?: Logger;
-
+  /**
+   * The minimum number of pool connections to make.
+   * Defaults to 0
+   */
+  poolMin?: number;
+  /**
+   * The maximum number of pool connections to make.
+   * Defaults to 2
+   */
+  poolMax?: number;
+  /**
+   * The number of additional pool connections that should be opened at one time
+   * Defaults to 1
+   */
+  poolIncrement?: number;
+  /**
+   * The amount of time to wait for a pool connection to close
+   * Defaults to 60
+   */
+  poolCloseTimeout?: number;
+  /**
+   * The number of rows that should be prefetched when querying the database
+   * Defaults to 1000
+   */
+  prefetchRowCount?: number;
 }

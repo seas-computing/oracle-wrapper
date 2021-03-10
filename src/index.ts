@@ -10,6 +10,19 @@ import { Logger, OracleDBCredentials, OracleDBOptions } from './types';
 oracledb.outFormat = oracledb.OUT_FORMAT_OBJECT;
 
 /**
+ * The default options for the Oracle Wrapper
+ */
+
+const defaultOptions: OracleDBOptions = {
+  logger: console,
+  poolMin: 0,
+  poolMax: 2,
+  poolIncrement: 1,
+  poolCloseTimeout: 60,
+  prefetchRowCount: 1000,
+};
+
+/**
  * Interface to the Oracle database
  */
 
@@ -37,25 +50,41 @@ export default class OracleWrapper {
   private poolCredentials: PoolAttributes;
 
   /**
+   * The amount of time to wait for the connection pool to close
+   */
+  private poolCloseTimeout: number;
+
+  /**
+   * the number of rows that should be fetched at one time
+   */
+  private prefetchRowCount: number;
+
+  /**
   * Create a new oracle interface
   */
   public constructor(
     credentials: OracleDBCredentials,
-    options: OracleDBOptions = {}
+    userOptions: OracleDBOptions = {}
   ) {
     const {
       host, port, sid, user, password,
     } = credentials;
+    const options = {
+      ...defaultOptions,
+      ...userOptions,
+    };
     this.alias = options.alias || sid;
-    this.logger = options.logger || console;
+    this.logger = options.logger;
+    this.poolCloseTimeout = options.poolCloseTimeout;
+    this.prefetchRowCount = options.prefetchRowCount;
     this.poolCredentials = {
       user,
       password,
       poolAlias: this.alias,
       connectionString: `${host}:${port}/${sid}`,
-      poolMin: 0,
-      poolMax: 2,
-      poolIncrement: 1,
+      poolMin: options.poolMin,
+      poolMax: options.poolMax,
+      poolIncrement: options.poolIncrement,
     };
   }
 
@@ -87,7 +116,7 @@ export default class OracleWrapper {
   public async releasePool(): Promise<void> {
     if (this.connectionPool) {
       try {
-        await this.connectionPool.close(60);
+        await this.connectionPool.close(this.poolCloseTimeout);
         this.connectionPool = null;
         this.logger.info('Connection pool released');
       } catch (err) {
@@ -106,10 +135,9 @@ export default class OracleWrapper {
     query: string,
     variables: Record<string, unknown> = {}
   ): Promise<T[]> {
-    const ROW_COUNT = 1000;
     const options = {
       resultSet: true,
-      prefetchRows: ROW_COUNT,
+      prefetchRows: this.prefetchRowCount,
     };
     const conn = await this.getConnection();
     // Execute Query
@@ -127,7 +155,7 @@ export default class OracleWrapper {
     // https://jsao.io/2015/07/an-overview-of-result-sets-in-the-nodejs-driver/
     try {
       const fetchAndConcat = async (prevRows: T[]): Promise<T[]> => {
-        const rows = await result.resultSet.getRows(ROW_COUNT);
+        const rows = await result.resultSet.getRows(this.prefetchRowCount);
         if (rows.length) {
           return fetchAndConcat([...prevRows, ...rows]);
         }

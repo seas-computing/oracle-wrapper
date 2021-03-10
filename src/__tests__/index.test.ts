@@ -1,5 +1,5 @@
 import util from 'util';
-import assert from 'assert';
+import { strictEqual, deepStrictEqual, fail } from 'assert';
 import { stub, SinonStub } from 'sinon';
 import oracledb, { Connection, PoolAttributes } from 'oracledb';
 import OracleWrapper from '../index';
@@ -59,7 +59,7 @@ describe('OracleWrapper', function () {
         });
         it('Should use the alias as the property', function () {
           // eslint-disable-next-line @typescript-eslint/dot-notation
-          assert.strictEqual(aliasedWrapper['alias'], testAlias);
+          strictEqual(aliasedWrapper['alias'], testAlias);
         });
       });
       context('Without a value in options', function () {
@@ -68,7 +68,7 @@ describe('OracleWrapper', function () {
         });
         it('Should use the sid as the alias property', function () {
           // eslint-disable-next-line @typescript-eslint/dot-notation
-          assert.strictEqual(aliasedWrapper['alias'], dummy.dbCredentials.sid);
+          strictEqual(aliasedWrapper['alias'], dummy.dbCredentials.sid);
         });
       });
     });
@@ -84,33 +84,33 @@ describe('OracleWrapper', function () {
         it('Should attempt to create a new connection pool', async function () {
           try {
             await wrapper.getConnection();
-            assert.fail();
+            fail();
           } catch (error) {
-            assert.strictEqual(createPoolStub.callCount, 1);
+            strictEqual(createPoolStub.callCount, 1);
           }
         });
         it('Should use the alias from options', async function () {
           try {
             await wrapper.getConnection();
-            assert.fail();
+            fail();
           } catch (error) {
             const { poolAlias } = createPoolStub.args[0][0] as PoolAttributes;
-            assert.strictEqual(poolAlias, options.alias);
+            strictEqual(poolAlias, options.alias);
           }
         });
         it('Should use the credentials', async function () {
           try {
             await wrapper.getConnection();
-            assert.fail();
+            fail();
           } catch (error) {
             const {
               user,
               password,
               connectionString,
             } = createPoolStub.args[0][0] as PoolAttributes;
-            assert.strictEqual(user, dummy.user);
-            assert.strictEqual(password, dummy.password);
-            assert.strictEqual(
+            strictEqual(user, dummy.user);
+            strictEqual(password, dummy.password);
+            strictEqual(
               connectionString,
               `${dummy.host}:${dummy.port}/${dummy.sid}`
             );
@@ -119,22 +119,22 @@ describe('OracleWrapper', function () {
         it('Should log an error notice', async function () {
           try {
             await wrapper.getConnection();
-            assert.fail();
+            fail();
           } catch (error) {
-            assert.strictEqual(testLogger.error.callCount, 2);
-            assert.strictEqual(
+            strictEqual(testLogger.error.callCount, 2);
+            strictEqual(
               testLogger.error.args[0][0],
               'Failed to create connectionPool'
             );
-            assert.strictEqual(testLogger.error.args[1][0], testError);
+            strictEqual(testLogger.error.args[1][0], testError);
           }
         });
         it('Should throw the error', async function () {
           try {
             await wrapper.getConnection();
-            assert.fail();
+            fail();
           } catch (error) {
-            assert.deepStrictEqual(error, testError);
+            deepStrictEqual(error, testError);
           }
         });
       });
@@ -149,35 +149,35 @@ describe('OracleWrapper', function () {
           it('Should call getConnection', async function () {
             try {
               await wrapper.getConnection();
-              assert.fail();
+              fail();
             } catch (error) {
-              assert.strictEqual(getConnectionStub.callCount, 1);
+              strictEqual(getConnectionStub.callCount, 1);
             }
           });
           it('Should use the alias from the options', async function () {
             try {
               await wrapper.getConnection();
-              assert.fail();
+              fail();
             } catch (error) {
-              assert.strictEqual(getConnectionStub.args[0][0], options.alias);
+              strictEqual(getConnectionStub.args[0][0], options.alias);
             }
           });
           it('Should log a message about the error', async function () {
             try {
               await wrapper.getConnection();
-              assert.fail();
+              fail();
             } catch (error) {
-              assert.strictEqual(testLogger.error.callCount, 2);
-              assert.strictEqual(testLogger.error.args[0][0], 'Failed to get connection');
-              assert.strictEqual(testLogger.error.args[1][0], testError);
+              strictEqual(testLogger.error.callCount, 2);
+              strictEqual(testLogger.error.args[0][0], 'Failed to get connection');
+              strictEqual(testLogger.error.args[1][0], testError);
             }
           });
           it('Should throw the error', async function () {
             try {
               await wrapper.getConnection();
-              assert.fail();
+              fail();
             } catch (error) {
-              assert.deepStrictEqual(error, testError);
+              deepStrictEqual(error, testError);
             }
           });
         });
@@ -189,11 +189,11 @@ describe('OracleWrapper', function () {
             result = await wrapper.getConnection();
           });
           it('Should attempt to create a new connection pool', function () {
-            assert.strictEqual(createPoolStub.callCount, 1);
+            strictEqual(createPoolStub.callCount, 1);
           });
           it('Should use the alias from options', function () {
             const { poolAlias } = createPoolStub.args[0][0] as PoolAttributes;
-            assert.strictEqual(poolAlias, options.alias);
+            strictEqual(poolAlias, options.alias);
           });
           it('Should use the credentials', function () {
             const {
@@ -201,21 +201,21 @@ describe('OracleWrapper', function () {
               password,
               connectionString,
             } = createPoolStub.args[0][0] as PoolAttributes;
-            assert.strictEqual(user, dummy.user);
-            assert.strictEqual(password, dummy.password);
-            assert.strictEqual(
+            strictEqual(user, dummy.user);
+            strictEqual(password, dummy.password);
+            strictEqual(
               connectionString,
               `${dummy.host}:${dummy.port}/${dummy.sid}`
             );
           });
           it('Should call getConnection', function () {
-            assert.strictEqual(getConnectionStub.callCount, 1);
+            strictEqual(getConnectionStub.callCount, 1);
           });
           it('Should use the alias from the options', function () {
-            assert.strictEqual(getConnectionStub.args[0][0], options.alias);
+            strictEqual(getConnectionStub.args[0][0], options.alias);
           });
           it('Should reuturn the result', function () {
-            assert.deepStrictEqual(result, dbConnection);
+            deepStrictEqual(result, dbConnection);
           });
         });
       });
@@ -230,11 +230,11 @@ describe('OracleWrapper', function () {
       });
       it('Should not call createPool again', async function () {
         await wrapper.getConnection();
-        assert.strictEqual(createPoolStub.callCount, 0);
+        strictEqual(createPoolStub.callCount, 0);
       });
       it('Should call getConnection', async function () {
         await wrapper.getConnection();
-        assert.strictEqual(getConnectionStub.callCount, 1);
+        strictEqual(getConnectionStub.callCount, 1);
       });
     });
   });
@@ -249,11 +249,11 @@ describe('OracleWrapper', function () {
         return wrapper.releasePool();
       });
       it('Should not call connectionPool.close', function () {
-        assert.strictEqual(connectionPool.close.callCount, 0);
+        strictEqual(connectionPool.close.callCount, 0);
       });
       it('Should not log anything', function () {
         Object.values(testLogger).forEach((logStub) => {
-          assert.strictEqual(logStub.callCount, 0);
+          strictEqual(logStub.callCount, 0);
         });
       });
     });
@@ -268,30 +268,30 @@ describe('OracleWrapper', function () {
         it('Should call connectionPool.close', async function () {
           try {
             await wrapper.releasePool();
-            assert.fail();
+            fail();
           } catch (error) {
-            assert.strictEqual(connectionPool.close.callCount, 1);
+            strictEqual(connectionPool.close.callCount, 1);
           }
         });
         it('Should log an error message', async function () {
           try {
             await wrapper.releasePool();
-            assert.fail();
+            fail();
           } catch (error) {
-            assert.strictEqual(testLogger.error.callCount, 2);
-            assert.strictEqual(
+            strictEqual(testLogger.error.callCount, 2);
+            strictEqual(
               testLogger.error.args[0][0],
               'Could not release pool'
             );
-            assert.strictEqual(testLogger.error.args[1][0], testError);
+            strictEqual(testLogger.error.args[1][0], testError);
           }
         });
         it('Should rethrow the error', async function () {
           try {
             await wrapper.releasePool();
-            assert.fail();
+            fail();
           } catch (error) {
-            assert.strictEqual(error, testError);
+            strictEqual(error, testError);
           }
         });
       });
@@ -301,11 +301,11 @@ describe('OracleWrapper', function () {
           return wrapper.releasePool();
         });
         it('Should call connectionPool.close', function () {
-          assert.strictEqual(connectionPool.close.callCount, 1);
+          strictEqual(connectionPool.close.callCount, 1);
         });
         it('Should log a message about the connection pool releasing', function () {
-          assert.strictEqual(testLogger.info.callCount, 1);
-          assert.strictEqual(
+          strictEqual(testLogger.info.callCount, 1);
+          strictEqual(
             testLogger.info.args[0][0],
             'Connection pool released'
           );
@@ -328,14 +328,14 @@ describe('OracleWrapper', function () {
       it('Should log the query and variables to the debug channel', async function () {
         try {
           await wrapper.query(dummy.queryWithParameters, dummy.queryParameters);
-          assert.fail();
+          fail();
         } catch (err) {
-          assert.strictEqual(testLogger.debug.callCount, 2);
-          assert.strictEqual(
+          strictEqual(testLogger.debug.callCount, 2);
+          strictEqual(
             testLogger.debug.args[0][0],
             `Executing Query: ${dummy.queryWithParameters}`
           );
-          assert.strictEqual(
+          strictEqual(
             testLogger.debug.args[1][0],
             `Parameters: ${util.inspect(dummy.queryParameters)}`
           );
@@ -344,35 +344,35 @@ describe('OracleWrapper', function () {
       it('Should attempt to execute the query', async function () {
         try {
           await wrapper.query(dummy.queryWithParameters, dummy.queryParameters);
-          assert.fail();
+          fail();
         } catch (err) {
-          assert.strictEqual(dbConnection.execute.callCount, 1);
+          strictEqual(dbConnection.execute.callCount, 1);
         }
       });
       it('Should log an error message', async function () {
         try {
           await wrapper.query(dummy.queryWithParameters, dummy.queryParameters);
-          assert.fail();
+          fail();
         } catch (err) {
-          assert.strictEqual(testLogger.error.callCount, 2);
-          assert.strictEqual(testLogger.error.args[0][0], 'Query failed');
-          assert.strictEqual(testLogger.error.args[1][0], testError);
+          strictEqual(testLogger.error.callCount, 2);
+          strictEqual(testLogger.error.args[0][0], 'Query failed');
+          strictEqual(testLogger.error.args[1][0], testError);
         }
       });
       it('Should release the connection', async function () {
         try {
           await wrapper.query(dummy.queryWithParameters, dummy.queryParameters);
-          assert.fail();
+          fail();
         } catch (err) {
-          assert.strictEqual(dbConnection.release.callCount, 1);
+          strictEqual(dbConnection.release.callCount, 1);
         }
       });
       it('Should throw the error', async function () {
         try {
           await wrapper.query(dummy.queryWithParameters, dummy.queryParameters);
-          assert.fail();
+          fail();
         } catch (err) {
-          assert.strictEqual(err, testError);
+          strictEqual(err, testError);
         }
       });
     });
@@ -390,11 +390,11 @@ describe('OracleWrapper', function () {
               dummy.queryWithParameters,
               dummy.queryParameters
             );
-            assert.fail();
+            fail();
           } catch (err) {
-            assert.strictEqual(testLogger.error.callCount, 2);
-            assert.strictEqual(testLogger.error.args[0][0], 'Error fetching data from query');
-            assert.strictEqual(testLogger.error.args[1][0], testError);
+            strictEqual(testLogger.error.callCount, 2);
+            strictEqual(testLogger.error.args[0][0], 'Error fetching data from query');
+            strictEqual(testLogger.error.args[1][0], testError);
           }
         });
         it('Should close the result set', async function () {
@@ -403,9 +403,9 @@ describe('OracleWrapper', function () {
               dummy.queryWithParameters,
               dummy.queryParameters
             );
-            assert.fail();
+            fail();
           } catch (err) {
-            assert.strictEqual(queryResult.resultSet.close.callCount, 1);
+            strictEqual(queryResult.resultSet.close.callCount, 1);
           }
         });
         it('Should release the connection', async function () {
@@ -414,9 +414,9 @@ describe('OracleWrapper', function () {
               dummy.queryWithParameters,
               dummy.queryParameters
             );
-            assert.fail();
+            fail();
           } catch (err) {
-            assert.strictEqual(dbConnection.release.callCount, 1);
+            strictEqual(dbConnection.release.callCount, 1);
           }
         });
         it('Should throw the error', async function () {
@@ -425,9 +425,9 @@ describe('OracleWrapper', function () {
               dummy.queryWithParameters,
               dummy.queryParameters
             );
-            assert.fail();
+            fail();
           } catch (err) {
-            assert.strictEqual(err, testError);
+            strictEqual(err, testError);
           }
         });
       });
@@ -450,14 +450,14 @@ describe('OracleWrapper', function () {
             );
           });
           it('should close the resultSet', function () {
-            assert.strictEqual(queryResult.resultSet.close.callCount, 1);
+            strictEqual(queryResult.resultSet.close.callCount, 1);
           });
           it('should close the connection', function () {
-            assert.strictEqual(dbConnection.release.callCount, 1);
+            strictEqual(dbConnection.release.callCount, 1);
           });
           it('should return the full set of results', function () {
-            assert.strictEqual(queryResult.resultSet.getRows.callCount, 3);
-            assert.deepStrictEqual(results, dummy.queryResults);
+            strictEqual(queryResult.resultSet.getRows.callCount, 3);
+            deepStrictEqual(results, dummy.queryResults);
           });
         });
         context('without Variables', function () {
@@ -465,14 +465,14 @@ describe('OracleWrapper', function () {
             results = await wrapper.query(dummy.queryWithoutParameters);
           });
           it('should close the resultSet', function () {
-            assert.strictEqual(queryResult.resultSet.close.callCount, 1);
+            strictEqual(queryResult.resultSet.close.callCount, 1);
           });
           it('should close the connection', function () {
-            assert.strictEqual(dbConnection.release.callCount, 1);
+            strictEqual(dbConnection.release.callCount, 1);
           });
           it('should return the full set of results', function () {
-            assert.strictEqual(queryResult.resultSet.getRows.callCount, 3);
-            assert.deepStrictEqual(results, dummy.queryResults);
+            strictEqual(queryResult.resultSet.getRows.callCount, 3);
+            deepStrictEqual(results, dummy.queryResults);
           });
         });
       });

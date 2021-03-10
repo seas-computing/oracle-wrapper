@@ -35,7 +35,7 @@ export const dbCredentials = {
 };
 
 /**
- * A fake query without an parameters
+ * A fake query without any parameters
  */
 export const queryWithoutParameters = 'SELECT * FROM users;';
 
